@@ -20,20 +20,22 @@
     <script src="viewshed.js"></script>
   </head>
   <body onload="init()" style="font-family: arial, sans-serif; font-size: 13px; border: 0;">
-  	<div id="map3d" style="width: 600px; height: 300px; float: left;"></div>
+  	<div id="map3d" style="width: 600px; height: 600px; float: left;"></div>
 	<div id="controls" style="float: left; padding-left: 20px; width: 500px">
 		<div><b>Approximate</b><br />
+			<em>Enter an address to fly above the location.</em><br />
 			Address: <input type="text" id="txtAddr" /><br />
 			Height (meters): <input type="text" id="txtAlt" />
 			<input type="button" value="Fly to" onclick="flyTo(tVal('txtAddr'), tVal('txtAlt'));" /><br />
 			<span id="results">Point location</span><br /><br />
 		</div>
 		<div><b>Specify</b><br />
-			Click on a building surface to view from that point.<br />
+			<em>Click on a building surface to view from that point.</em><br />
 			Point: <span id="standingPoint"></span><br />
 			Roof Height: <span id="standingAltitude">?</span> meters<br /><br />
 		</div>
-		<div><b>Adjust</b>
+		<div><b>Adjust</b><br />
+			<em>Use these controls to control your vantage point.</em><br />
 			<div>
 				Height above roof
 				<input type="button" value="+" id="btnAddAltUp" onclick="modParam('txtAddAlt', .5);"/>
@@ -53,7 +55,7 @@
 				<input type="button" value="->" id="btnHeadDown" onclick="modParam('txtHead', 10);" />
 			</div>
 			<div>
-				<input type="button" value="Update" id="btnUpdate" />
+				<input type="button" value="Update" onclick="lookUpdate()" />
 			</div>
 		</div>
 	</div>
