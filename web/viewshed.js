@@ -1,33 +1,57 @@
-
 var ge;
+var debug = true;
+
+var roofHeight;
+var cam = {
+	lat: 0,
+	lon: 0,
+	altitude: 0,
+	heading: 0,
+	tilt: 90,
+	go: function(){
+		var view = ge.getView();
+		var camera = view.copyAsCamera(ge.ALTITUDE_RELATIVE_TO_GROUND);
+		camera.setLatitude(this.lat);
+		camera.setLongitude(this.lon);
+		camera.setAltitude(this.altitude);
+		camera.setHeading(this.heading);
+		camera.setTilt(this.tilt);
+		ge.getView().setAbstractView(camera);
+	}
+}
 
 google.load("earth", "1");
 
 function init() {
-  google.earth.createInstance('map3d', initCallback);
+	google.earth.createInstance('map3d', initCallback);
+	if (debug) {
+		setText('txtAddr', '737 Spruce St');
+		setText('txtAlt', 100);
+	}
 }
 
 function initCallback(pluginInstance) {
-  ge = pluginInstance;
-  ge.getWindow().setVisibility(true);
-
-  // add a navigation control
-  ge.getNavigationControl().setVisibility(ge.VISIBILITY_AUTO);
-
-  // add some layers
-  ge.getLayerRoot().enableLayerById(ge.LAYER_BORDERS, true);
-  ge.getLayerRoot().enableLayerById(ge.LAYER_ROADS, true);
-  ge.getLayerRoot().enableLayerById(ge.LAYER_BUILDINGS, true);
-  
+	ge = pluginInstance;
+	ge.getWindow().setVisibility(true);
+	
+	// add a navigation control
+	ge.getNavigationControl().setVisibility(ge.VISIBILITY_AUTO);
+	
+	// add some layers
+	ge.getLayerRoot().enableLayerById(ge.LAYER_BORDERS, true);
+	ge.getLayerRoot().enableLayerById(ge.LAYER_ROADS, true);
+	ge.getLayerRoot().enableLayerById(ge.LAYER_BUILDINGS, true);
+	
+	google.earth.addEventListener(ge.getGlobe(), 'click', viewClick);
 }
 
-function go(){
+function flyTo(address, altitude){
 	$.ajax({
 		type: "POST",
 		dataType: "json",
 		url: "proxy.php?url=http://www.phillyhistory.org/PhotoArchive/geocode.ashx",
 		data: {
-			address: '626 s 16th st'
+			address: address
 		},
 		success: function(data){
 			// {"totalMatches":1,"matches":[{"location":"737 Spruce St","xcoord":"2696192","ycoord":"233855.999999931"}]}
@@ -40,26 +64,51 @@ function go(){
 			var pointDest = new Proj4js.Point(+x,+y);
 			Proj4js.transform(source, dest, pointDest);
 			
-			$('#results').html(
-				'2272: (' + pointSource.x + ', ' + pointSource.y + ')' + '<br />' +
-				'4326: (' + pointDest.x + ', ' + pointDest.y + ')'
-			);
+			if (debug) {
+				$('#results').html(
+					'2272: (' + pointSource.x + ', ' + pointSource.y + ')' + '<br />' +
+					'4326: (' + pointDest.x + ', ' + pointDest.y + ')'
+				);
+			}
 			
-			var view = ge.getView();
-			var camera = view.copyAsCamera(ge.ALTITUDE_RELATIVE_TO_GROUND);
-			camera.setLatitude(pointDest.y);
-			camera.setLongitude(pointDest.x);
-			camera.setAltitude(20);
-			ge.getView().setAbstractView(camera);
-			
-			setTimeout(
-				function(){
-					camera.setTilt(100);
-					ge.getView().setAbstractView(camera);
-				},
-				3000
-			);
+			cam.altitude = +altitude;
+			cam.lat = pointDest.y;
+			cam.lon = pointDest.x;
+			cam.heading = 0;
+			cam.tilt = 0;
+			cam.go();
 		}
 	});
+}
 
+function viewClick(evt){
+	if (evt.getButton() != 0)
+	return;
+	
+	// hit test and create new placemarks
+	var point = ge.getView().hitTest(evt.getClientX(), ge.UNITS_PIXELS, evt.getClientY(), ge.UNITS_PIXELS, ge.HIT_TEST_BUILDINGS);
+	if (point) {
+		var lat = point.getLatitude(), 
+			lon = point.getLongitude(),
+			alt = point.getAltitude(); 
+		$('#standingPoint').html("(" + lon + ", " + lat + ")");
+		$('#standingAltitude').html(alt);
+		
+		cam.lat = lat;
+		cam.lon = lon;
+		roofHeight = alt;
+		lookUpdate();
+	}
+}
+
+function lookUpdate(){
+	cam.altitude = roofHeight + +tVal('txtAddAlt');
+	cam.tilt = +tVal('txtTilt');
+	cam.heading = +tVal('txtHead');
+	cam.go();
+}
+
+function modParam(textId, delta){
+	$('#' + textId).val(+$('#' + textId).val() + delta);
+	lookUpdate();
 }
