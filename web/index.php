@@ -6,7 +6,7 @@
 		$google_key = 'ABQIAAAAWkLoRyKMiEp-MzJSV6esWBT5w9XzsCNVR7bANPBewbwuhytdzRTbHQMYHV4jKNuPT69lZgyvPchayw';
 	}
 	else{
-		$google_key = '';
+		$google_key = 'ABQIAAAAWkLoRyKMiEp-MzJSV6esWBT5w9XzsCNVR7bANPBewbwuhytdzRTbHQMYHV4jKNuPT69lZgyvPchayw';
 	}
 ?>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -22,18 +22,18 @@
   <body onload="init()" style="font-family: arial, sans-serif; font-size: 13px; border: 0;">
   	<div id="map3d" style="width: 600px; height: 300px; float: left;"></div>
 	<div id="controls" style="float: left; padding-left: 20px; width: 500px">
-		<div>Step 1: Approximate<br />
+		<div><b>Approximate</b><br />
 			Address: <input type="text" id="txtAddr" /><br />
 			Height (meters): <input type="text" id="txtAlt" />
 			<input type="button" value="Fly to" onclick="flyTo(tVal('txtAddr'), tVal('txtAlt'));" /><br />
 			<span id="results">Point location</span><br /><br />
 		</div>
-		<div>Step 2: Specify<br />
+		<div><b>Specify</b><br />
 			Click on a building surface to view from that point.<br />
 			Point: <span id="standingPoint"></span><br />
-			Roof Height: <span id="standingAltitude"></span> meters<br /><br />
+			Roof Height: <span id="standingAltitude">?</span> meters<br /><br />
 		</div>
-		<div>Step 3: Adjust
+		<div><b>Adjust</b>
 			<div>
 				Height above roof
 				<input type="button" value="+" id="btnAddAltUp" onclick="modParam('txtAddAlt', .5);"/>
@@ -48,9 +48,9 @@
 			</div>
 			<div>
 				Heading
-				<input type="button" value="+" id="btnHeadUp" onclick="modParam('txtHead', 10);" />
+				<input type="button" value="<-" id="btnHeadUp" onclick="modParam('txtHead', -10);" />
 				<input type="text" style="width: 50px;" id="txtHead" value="0" />
-				<input type="button" value="-" id="btnHeadDown" onclick="modParam('txtHead', -10);" />
+				<input type="button" value="->" id="btnHeadDown" onclick="modParam('txtHead', 10);" />
 			</div>
 			<div>
 				<input type="button" value="Update" id="btnUpdate" />
