@@ -1,6 +1,6 @@
 var ge;
 var debug = true;
-
+var $ = jQuery;
 var roofHeight;
 var cam = {
 	lat: 0,
