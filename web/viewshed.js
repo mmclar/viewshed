@@ -10,7 +10,7 @@ var cam = {
 	tilt: 90,
 	go: function(){
 		var view = ge.getView();
-		var camera = view.copyAsCamera(ge.ALTITUDE_RELATIVE_TO_GROUND);
+		var camera = view.copyAsCamera(ge.ALTITUDE_ABSOLUTE);
 		camera.setLatitude(this.lat);
 		camera.setLongitude(this.lon);
 		camera.setAltitude(this.altitude);
@@ -34,12 +34,6 @@ function initCallback(pluginInstance) {
 	ge = pluginInstance;
 	ge.getWindow().setVisibility(true);
 	
-	// add a navigation control
-	ge.getNavigationControl().setVisibility(ge.VISIBILITY_AUTO);
-	
-	// add some layers
-	ge.getLayerRoot().enableLayerById(ge.LAYER_BORDERS, true);
-	ge.getLayerRoot().enableLayerById(ge.LAYER_ROADS, true);
 	ge.getLayerRoot().enableLayerById(ge.LAYER_BUILDINGS, true);
 	
 	google.earth.addEventListener(ge.getGlobe(), 'click', viewClick);
