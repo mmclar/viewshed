@@ -25,7 +25,7 @@ google.load("earth", "1");
 function init() {
 	google.earth.createInstance('map3d', initCallback);
 	if (debug) {
-		setText('txtAddr', '737 Spruce St');
+		setText('txtAddr', '737 Spruce St., Philadelphia, PA');
 		setText('txtAlt', 100);
 	}
 }
@@ -39,39 +39,21 @@ function initCallback(pluginInstance) {
 	google.earth.addEventListener(ge.getGlobe(), 'click', viewClick);
 }
 
+var geocoder = new GClientGeocoder();
 function flyTo(address, altitude){
-	$.ajax({
-		type: "POST",
-		dataType: "json",
-		url: "proxy.php?url=http://www.phillyhistory.org/PhotoArchive/geocode.ashx",
-		data: {
-			address: address
-		},
-		success: function(data){
-			// {"totalMatches":1,"matches":[{"location":"737 Spruce St","xcoord":"2696192","ycoord":"233855.999999931"}]}
-			var x = data.matches[0].xcoord, y = data.matches[0].ycoord;
-			
-			Proj4js.defs["EPSG:2272"] = "+proj=lcc +lat_1=40.96666666666667 +lat_2=39.93333333333333 +lat_0=39.33333333333334 +lon_0=-77.75 +x_0=600000 +y_0=0 +ellps=GRS80 +datum=NAD83 +to_meter=0.3048006096012192 +no_defs";
-			var source = new Proj4js.Proj('EPSG:2272');
-			var dest = new Proj4js.Proj('EPSG:4326');
-			var pointSource = new Proj4js.Point(+x,+y);
-			var pointDest = new Proj4js.Point(+x,+y);
-			Proj4js.transform(source, dest, pointDest);
-			
-			if (debug) {
-				$('#results').html(
-					'2272: (' + pointSource.x + ', ' + pointSource.y + ')' + '<br />' +
-					'4326: (' + pointDest.x + ', ' + pointDest.y + ')'
-				);
-			}
-			
+  geocoder.getLatLng(
+    address,
+    function(point){
+      if (debug) {
+				$('#results').html('gc response object: ' + point + '<br />');
+      }
+
 			cam.altitude = +altitude;
-			cam.lat = pointDest.y;
-			cam.lon = pointDest.x;
+			cam.lon = point.x;
+			cam.lat = point.y;
 			cam.heading = 0;
 			cam.tilt = 0;
 			cam.go();
-		}
 	});
 }
 
