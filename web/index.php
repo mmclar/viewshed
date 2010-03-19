@@ -58,7 +58,12 @@
 				<input type="button" value="Update" onclick="lookUpdate()" />
 			</div>
 		</div>
-	</div>
+    <br />
+    <div><b>About</b></div>
+	  I put this together when I was looking for potential houses for purchase, to get an idea of the type of view they will have from the roof.  It is not perfect, but it does a pretty realistic job of estimating.  It has helped me skip looking at a few houses that had their views blocked by large nearby buildings.<p>
+  Some things to do:
+    <ul><li>switch to a more general geocoder</li><li>allow for location (NSEW) movement</li></ul>
+    </div>
     <br>
   </body>
  </html>
