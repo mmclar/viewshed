@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Viewshed Estimate</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.73/Build/Cesium/Cesium.js"></script>
+    <link href="https://cesium.com/downloads/cesiumjs/releases/1.73/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+    <script src="js/util.js"></script>
+    <script src="js/viewshed.js"></script>
+</head>
+<body>
+<div id="cesiumContainer" style="width: 1200px; height: 800px; float: left;"></div>
+<div id="controls" style="float: left; padding-left: 20px; width: 500px">
+    <div><b>Approximate</b><br />
+        <form class="approximate">
+            <em>Enter an address to fly above the location.</em><br />
+            Address: <input type="text" id="txtAddr" value="363 7th Street, Brooklyn" /><br />
+            <input type="submit" value="Fly to" /><br />
+        </form>
+    </div>
+    <p />
+    <div><b>Adjust</b><br />
+        <em>Use these controls to control your vantage point.</em><br />
+        <div>
+            Height (meters):
+            <input type="button" value="-" onclick="modParam('txtAlt', -5, viewShed.setAltitude);" />
+            <input type="button" value="-" onclick="modParam('txtAlt', -.5, viewShed.setAltitude);" />
+            <input type="text" id="txtAlt" style="width:80px;" value="50"/>
+            <input type="button" value="+" onclick="modParam('txtAlt', .5, viewShed.setAltitude);"/>
+            <input type="button" value="+" onclick="modParam('txtAlt', 5, viewShed.setAltitude);"/>
+        </div>
+        <div>
+            Pitch
+            <input type="button" value="-" onclick="modParam('txtTilt', -10, viewShed.setPitch);" />
+            <input type="button" value="-" onclick="modParam('txtTilt', -1, viewShed.setPitch);" />
+            <input type="text" value="0" style="width: 50px;" id="txtTilt" />
+            <input type="button" value="+" onclick="modParam('txtTilt', 1, viewShed.setPitch);" />
+            <input type="button" value="+" onclick="modParam('txtTilt', 10, viewShed.setPitch);" />
+        </div>
+        <div>
+            Heading
+            <input type="button" value="<-" onclick="modParam('txtHead', -10, viewShed.setHeading);" />
+            <input type="text" style="width: 50px;" id="txtHead" value="0" />
+            <input type="button" value="->" onclick="modParam('txtHead', 10, viewShed.setHeading);" />
+        </div>
+    </div>
+</div>
+<br>
+</body>
+<script>
+    // Your access token can be found at: https://cesium.com/ion/tokens.
+    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJhMTE5OWFkOC1lMTViLTQ3ZTctYTkyMC1iMmE1MDU5ZGYxZGIiLCJpZCI6MzQ4MjcsImlhdCI6MTYwMDg3MTQ5NH0.9x5LFarOqpBXM5BMPgs3V6Qz9go1mx2BqjLUvbUerKI';
+    // Initialize the Cesium Viewer in the HTML element with the `cesiumContainer` ID.
+    const viewer = new Cesium.Viewer('cesiumContainer', { terrainProvider: Cesium.createWorldTerrain() });
+    // Add Cesium OSM Buildings, a global 3D buildings layer.
+    viewer.scene.primitives.add(Cesium.createOsmBuildings());
+</script>
+</body>
+</html>
